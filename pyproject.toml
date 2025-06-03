@@ -1,0 +1,128 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "depytree"
+version = "1.0.0"
+description = "Analysis of internal dependencies for Python packages"
+authors = [{ name = "Franziska Horn", email = "cod3licious@gmail.com" }]
+readme = "README.md"
+license = "MIT"
+keywords = ["dependencies"]
+requires-python = ">=3.8.1,<3.15"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "ipython>=8.0.0",
+    "mypy>=1.7.1",
+    "poethepoet>=0.24.4",
+    "pytest>=7.4.0",
+    "pyupgrade>=3.9.0",
+    "ruff>=0.2.1",
+]
+
+[project.urls]
+Repository = "https://github.com/cod3licious/depytree"
+
+[tool.uv]
+required-version = ">=0.5.31"
+
+
+[tool.poe.tasks]
+# run with `uv run poe format`
+format = "bash -c 'pyupgrade --py310-plus $(find **/*.py) && ruff check --fix . && ruff format .'"
+check = "bash -c 'ruff check . && mypy src/depytree'"
+test = "bash -c 'pytest tests'"
+
+
+[tool.ruff]
+target-version = "py310"
+line-length = 128
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".eggs",
+    ".git",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".venv",
+    "__pypackages__",
+    "__pycache__",
+    "build",
+    "dist",
+    "*.ipynb",
+]
+
+[tool.ruff.lint]
+select = ["A", "B", "C4", "D", "E", "F", "G", "I", "N", "Q", "W", "COM", "DTZ", "FA", "ICN", "INP", "PIE", "PD", "PL", "RSE", "RET", "RUF", "SIM", "SLF", "UP"]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["C4", "D", "E", "G", "I", "Q", "W", "COM", "PD", "RSE", "RET", "RUF", "SIM", "SLF", "UP"]
+# Avoid trying to fix flake8-bugbear (`B`) violations.
+unfixable = ["B", "F841"]
+
+# Ignore a few rules that we consider too strict.
+ignore = ["E501", # Line too long
+    "E741", # Ambiguous variable name: `l`
+    "PD901", # 'df' is a bad variable name
+    "N999", # Invalid module name: '🏠_Home'
+    "N802", "N803", "N806", # names should be lowercase
+    "D1",  # D100 - D107: Missing docstrings
+    "D212", # Multi-line docstring summary should start at the second line
+    "D400", # adds a period at the end of line (problematic when it is a path)
+    "D415", # First line should end with a period, question mark, or exclamation point
+    "D203", "D204", "D205", # required blank lines
+    "G004", # Logging statement uses f-string
+    "PIE790", # Unnecessary `pass` statement
+    "PLC0206", # Extracting value from dictionary without calling `.items()`
+    "PLR2004", # Magic value used in comparison, consider replacing 0.999 with a constant variable
+    "PLR09", # Too many arguments to function call
+    "COM812", # trailing comma - don't use together with formatter
+]
+
+# Ignore `E402` (import violations) in all `__init__.py` files, and in `path/to/file.py`.
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+known-first-party = ["depytree", "depytree.*"]
+section-order = ["future", "standard-library", "third-party", "first-party", "tests", "local-folder"]
+
+[tool.ruff.lint.isort.sections]
+"tests" = ["tests"]
+
+[tool.ruff.lint.flake8-import-conventions]
+
+[tool.mypy]
+
+[[tool.mypy.overrides]]
+module = [
+    "pandas.*",
+    "sklearn.*",
+    "joblib.*",
+    "scipy.*",
+    "numpy",
+    "numba",
+    "pandas.*",
+    "streamlit.*",
+    "matplotlib.*",
+    "IPython.*",
+    "plotly.*",
+    "seaborn.*",
+    "requests.*",
+    "sqlalchemy.*"
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--disable-warnings"
+markers = ["slow"]
