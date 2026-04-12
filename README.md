@@ -2,6 +2,8 @@
 
 This repository includes a Python module `depytree`, which parses a given Python package to extract its internal dependency tree, saves the results in two JSON files (`data/graph_data.json` includes the dependencies between all files (modules) and their units, `data/graph_data_modules.json` includes only the dependencies between the modules), which can then be loaded using the `index.html` page to show the resulting dependency tree as an interactive d3.js graph.
 
+You might also be interested in another project of mine, [ArchGraph](https://github.com/cod3licious/archgraph), which also works for non-python codebases (and even plain text codebase descriptions) and provides more flexibility w.r.t. the offered visualizations.
+
 ### Usage
 
 In the repo's root directory (i.e., where `pyproject.toml` lives), run the `depytree` module script with a package to create the package's internal dependency tree. The package can be supplied either as the Python package name (in this case it needs to be installed in the currently active environment so that it can be imported), or as a path to the folder that contains the package:
